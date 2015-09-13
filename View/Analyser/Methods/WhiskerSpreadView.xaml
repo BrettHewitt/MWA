@@ -1,0 +1,144 @@
+﻿<UserControl x:Class="RobynsWhiskerTracker.View.Analyser.Methods.WhiskerSpreadView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:behaviours="clr-namespace:RobynsWhiskerTracker.Behaviours"
+             mc:Ignorable="d" 
+             d:DesignHeight="300" d:DesignWidth="300">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="5*"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        
+        <Grid Grid.Row="0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <Image x:Name="MainImage" Grid.Row="0" Source="{Binding Path=Image, Converter={StaticResource BitmapConverter}}" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="50" SizeChanged="MainImage_OnSizeChanged"/>
+
+            <ItemsControl x:Name="Points" Grid.Row="0" Grid.Column="0" ItemsSource="{Binding Path=CurrentFrame.Whiskers}" HorizontalAlignment="Center" VerticalAlignment="Center">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <Canvas IsItemsHost="True" Width="{Binding Path=LastKnownImageWidth}" Height="{Binding Path=LastKnownImageHeight}"/>
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemContainerStyle>
+                    <Style>
+                        <Setter Property="Canvas.Left" Value="{Binding Path=XCanvas}"/>
+                        <Setter Property="Canvas.Top" Value="{Binding Path=YCanvas}"/>
+                    </Style>
+                </ItemsControl.ItemContainerStyle>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Ellipse IsHitTestVisible="False" Stroke="Yellow" Width="{Binding Path=PointSize}" Height="{Binding Path=PointSize}" Visibility="{Binding Path=Enabled, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+
+            <ItemsControl x:Name="CurveData" Grid.Row="0" Grid.Column="0" ItemsSource="{Binding Path=CurrentFrame.Whiskers}" HorizontalAlignment="Center" VerticalAlignment="Center">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <Canvas IsItemsHost="True" Width="{Binding Path=LastKnownImageWidth}" Height="{Binding Path=LastKnownImageHeight}"/>
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Path Stroke="Blue" StrokeThickness="1" Data="{Binding Path=Data}" Visibility="{Binding Path=Enabled, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+
+            <ItemsControl x:Name="AngleLine" Grid.Row="0" Grid.Column="0" ItemsSource="{Binding Path=CurrentFrame.Whiskers}" HorizontalAlignment="Center" VerticalAlignment="Center">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <Canvas IsItemsHost="True" Width="{Binding Path=LastKnownImageWidth}" Height="{Binding Path=LastKnownImageHeight}"/>
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Line Stroke="Red" StrokeThickness="1" X1="{Binding Path=X1}" Y1="{Binding Path=Y1}" X2="{Binding Path=X2}" Y2="{Binding Path=Y2}" StrokeDashArray="4" Visibility="{Binding Path=Enabled, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+
+            <Grid Grid.Row="1">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Text="Angle Point: " Margin="5" Grid.Column="0"/>
+                <Grid Grid.Column="1">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <Slider Grid.Column="0" Margin="5" Minimum="0" Maximum="1" TickFrequency="0.01" Value="{Binding Path=TValue, Mode=TwoWay}"/>
+                    <TextBox Grid.Column="1" Width="50" Margin="5" Text="{Binding Path=TValue, Mode=TwoWay}" behaviours:NumericTextBoxBehaviour.MinNumber="0" behaviours:NumericTextBoxBehaviour.MaxNumber="1"/>
+                </Grid>
+            </Grid>
+        </Grid>
+
+        <GridSplitter Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Center" ShowsPreview="True" Height="4"
+                      BorderBrush="White" BorderThickness="1"
+                      Style="{DynamicResource GridSplitterStyle1}"/>
+        
+        <Grid Grid.Row="2">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            
+            <TextBlock Grid.Row="0" Grid.Column="0" Text="Left Average Spread"/>
+            <TextBlock Grid.Row="0" Grid.Column="1" Text="Left Maximum Spread"/>
+            <TextBlock Grid.Row="0" Grid.Column="2" Text="Right Average Spread"/>
+            <TextBlock Grid.Row="0" Grid.Column="3" Text="Right Maximum Spread"/>
+
+            <TextBlock Grid.Row="1" Grid.Column="0" Text="{Binding Path=CurrentFrame.LeftAverage}"/>
+            <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding Path=CurrentFrame.LeftMax}"/>
+            <TextBlock Grid.Row="1" Grid.Column="2" Text="{Binding Path=CurrentFrame.RightAverage}"/>
+            <TextBlock Grid.Row="1" Grid.Column="3" Text="{Binding Path=CurrentFrame.RightMax}"/>
+
+        </Grid>
+
+        <!--<ListView Grid.Row="2" ItemsSource="{Binding Path=DisplayWhiskers}">
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn Header="Name" Width="150">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Path=Whisker.WhiskerName}"/>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                    <GridViewColumn Header="Angle" Width="200">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Path=Whisker.Angle}"/>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                    <GridViewColumn Header="Enabled" Width="50">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <CheckBox HorizontalAlignment="Center" VerticalAlignment="Center" IsChecked="{Binding Path=Enabled, Mode=TwoWay}"/>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                </GridView>
+            </ListView.View>
+        </ListView>-->
+    </Grid>
+    
+    
+</UserControl>

@@ -1,0 +1,169 @@
+﻿<UserControl x:Class="RobynsWhiskerTracker.View.Analyser.Methods.WhiskerAmplitudeView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:chartingToolkit="clr-namespace:System.Windows.Controls.DataVisualization.Charting;assembly=System.Windows.Controls.DataVisualization.Toolkit"
+             xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+             xmlns:behaviours="clr-namespace:RobynsWhiskerTracker.Behaviours"
+             mc:Ignorable="d" 
+             d:DesignHeight="300" d:DesignWidth="300">
+    <UserControl.Resources>
+        <Style x:Key="InvisibleDataPoint" TargetType="{x:Type chartingToolkit:DataPoint}">
+            <Setter Property="Background" Value="Blue"/>
+            <Setter Property="Template" Value="{x:Null}"/>
+        </Style>
+    </UserControl.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="5*"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <Grid Grid.Row="0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <chartingToolkit:Chart Grid.Row="0" Title="Protraction/Retraction Velocities" Margin="5" VerticalAlignment="Stretch">
+                <chartingToolkit:LineSeries DependentValuePath="Value" IndependentValuePath="Key" ItemsSource="{Binding Path=AngleData}" IsSelectionEnabled="True" DataPointStyle="{StaticResource InvisibleDataPoint}" Title="Angle"/>
+                <chartingToolkit:LineSeries DependentValuePath="Value" IndependentValuePath="Key" ItemsSource="{Binding Path=CurrentFrameIndicator}" IsSelectionEnabled="True" Title="Current Frame">
+                    <chartingToolkit:LineSeries.PolylineStyle>
+                        <Style TargetType="Polyline">
+                            <Setter Property="StrokeDashArray" Value="5 5 5" />
+                            <Setter Property="StrokeThickness" Value="2"/>
+                        </Style>
+                    </chartingToolkit:LineSeries.PolylineStyle>
+                    <chartingToolkit:LineSeries.DataPointStyle>
+                        <Style TargetType="{x:Type chartingToolkit:LineDataPoint}">
+                            <Setter Property="Background" Value="Black"/>
+                            <Setter Property="Template" Value="{x:Null}" />
+                        </Style>
+                    </chartingToolkit:LineSeries.DataPointStyle>
+                </chartingToolkit:LineSeries>
+            </chartingToolkit:Chart>
+
+            <Grid Grid.Row="1">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Text="Angle Method: " Margin="5" Grid.Row="1" Grid.Column="0"/>
+                <ComboBox Grid.Row="1" Grid.Column="1" Margin="5" ItemsSource="{Binding Path=AngleOptions}" SelectedItem="{Binding Path=SelectedAngleOption, Mode=TwoWay}" DisplayMemberPath="Name"/>
+
+                <TextBlock Text="Whisker: " Margin="5" Grid.Row="2" Grid.Column="0"/>
+                <ComboBox Grid.Row="2" Grid.Column="1" Margin="5" ItemsSource="{Binding Path=Whiskers}" SelectedItem="{Binding Path=SelectedWhisker, Mode=TwoWay}" DisplayMemberPath="WhiskerName"/>
+
+                <TextBlock Text="T Value: " Margin="5" Grid.Row="3" Grid.Column="0"/>
+                <Grid Grid.Row="3" Grid.Column="1">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <Slider Margin="5" Minimum="0" Maximum="1" TickFrequency="0.01" Value="{Binding Path=TValue, Mode=OneWay}">
+                        <i:Interaction.Behaviors>
+                            <behaviours:SliderValueChangedBehavior Command="{Binding Path=ValueChangedCommand}"/>
+                        </i:Interaction.Behaviors>
+                    </Slider>
+                    <TextBox Grid.Column="1" Width="50" Margin="5" Text="{Binding Path=TValue, Mode=TwoWay}" behaviours:NumericTextBoxBehaviour.MinNumber="0" behaviours:NumericTextBoxBehaviour.MaxNumber="1"/>
+                </Grid>
+            </Grid>
+        </Grid>
+
+        <GridSplitter Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Center" ShowsPreview="True" Height="4"
+                      BorderBrush="White" BorderThickness="1"
+                      Style="{DynamicResource GridSplitterStyle1}"/>
+
+        <ListView Grid.Row="2" ItemsSource="{Binding Path=DisplayWhiskers}">
+            <ListView.ItemContainerStyle>
+                <Style TargetType="ListViewItem">
+                    <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                </Style>
+            </ListView.ItemContainerStyle>
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn Header="Name" Width="150">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Path=Whisker.WhiskerName}"/>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                    <GridViewColumn Header="Max Amplitude" Width="110">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Path=Whisker.MaxAmplitude}"/>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                    <GridViewColumn Header="Max Angle" Width="110">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Path=Whisker.MaxAngle}"/>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                    <GridViewColumn Header="Min Angle" Width="110">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Path=Whisker.MinAngle}"/>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                    <GridViewColumn Header="Current Amplitude" Width="110">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Path=Whisker.CurrentAmplitude}"/>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                    <GridViewColumn Header="Current Max Angle" Width="110">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Path=Whisker.CurrentMaxAngle}"/>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                    <GridViewColumn Header="Current Min Angle" Width="110">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Path=Whisker.CurrentMinAngle}"/>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                    <GridViewColumn Header="Mean Amplitude" Width="110">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Path=Whisker.MeanAmplitude}"/>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                    <GridViewColumn Header="RMS" Width="110">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Path=Whisker.RMS}"/>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                    <GridViewColumn Header="Enabled" Width="50">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <CheckBox HorizontalAlignment="Center" VerticalAlignment="Center" IsChecked="{Binding Path=Enabled, Mode=TwoWay}"/>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                </GridView>
+            </ListView.View>
+        </ListView>
+    </Grid>
+</UserControl>

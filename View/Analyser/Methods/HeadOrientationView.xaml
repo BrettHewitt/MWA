@@ -1,0 +1,90 @@
+﻿<UserControl x:Class="RobynsWhiskerTracker.View.Analyser.Methods.HeadOrientationView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             mc:Ignorable="d" 
+             d:DesignHeight="300" d:DesignWidth="300">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="5*"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <GridSplitter Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Center" ShowsPreview="True" Height="4"
+                      BorderBrush="White" BorderThickness="1"
+                      Style="{DynamicResource GridSplitterStyle1}"/>
+
+        <Image x:Name="MainImage" Grid.Row="0" Source="{Binding Path=Image, Converter={StaticResource BitmapConverter}}" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="50" SizeChanged="MainImage_OnSizeChanged"/>
+
+        <!--<ItemsControl x:Name="Points" Grid.Row="0" Grid.Column="0" ItemsSource="{Binding Path=CurrentFrame.Whiskers}" HorizontalAlignment="Center" VerticalAlignment="Center">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <Canvas IsItemsHost="True" Width="{Binding Path=LastKnownImageWidth}" Height="{Binding Path=LastKnownImageHeight}"/>
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemContainerStyle>
+                <Style>
+                    <Setter Property="Canvas.Left" Value="{Binding Path=XCanvas}"/>
+                    <Setter Property="Canvas.Top" Value="{Binding Path=YCanvas}"/>
+                </Style>
+            </ItemsControl.ItemContainerStyle>
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <Ellipse IsHitTestVisible="False" Stroke="Blue" Width="{Binding Path=Size}" Height="{Binding Path=Size}" Visibility="{Binding Path=Enabled, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>-->
+
+        <ItemsControl x:Name="PointsLine" Grid.Row="0" Grid.Column="0" ItemsSource="{Binding Path=CurrentFrame.Whiskers}" HorizontalAlignment="Center" VerticalAlignment="Center">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <Canvas IsItemsHost="True" Width="{Binding Path=LastKnownImageWidth}" Height="{Binding Path=LastKnownImageHeight}"/>
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <Line X1="{Binding Path=OrientationPoint.X}" 
+                          Y1="{Binding Path=OrientationPoint.Y}" 
+                          X2="{Binding Path=NosePoint.X}" 
+                          Y2="{Binding Path=NosePoint.Y}"
+                        StrokeThickness="1" IsHitTestVisible="False" Stroke="Yellow" Visibility="{Binding Path=Enabled, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+
+        <ListView Grid.Row="2" ItemsSource="{Binding Path=DisplayWhiskers}">
+            <ListView.ItemContainerStyle>
+                <Style TargetType="ListViewItem">
+                    <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                </Style>
+            </ListView.ItemContainerStyle>
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn Header="Name" Width="150">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="Head Orientation: "/>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                    <GridViewColumn Header="Orientation" Width="200">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Path=Whisker.Orientation}"/>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                    <GridViewColumn Header="Enabled" Width="50">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <CheckBox HorizontalAlignment="Center" VerticalAlignment="Center" IsChecked="{Binding Path=Enabled, Mode=TwoWay}"/>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                </GridView>
+            </ListView.View>
+        </ListView>
+    </Grid>
+</UserControl>

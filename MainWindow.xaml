@@ -1,0 +1,188 @@
+﻿<Window x:Class="RobynsWhiskerTracker.MainWindow"        
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:converters="clr-namespace:RobynsWhiskerTracker.Converters"
+        xmlns:behaviours="clr-namespace:RobynsWhiskerTracker.Behaviours"
+        behaviours:WindowClosingBehavior.Close="{Binding Path=Close}"
+        behaviours:WindowClosingBehavior.Closing="{Binding Path=ClosingCommand}"
+        Title="Manual Whisker Annotator" Height="350" Width="525" WindowState="Maximized">
+    <Window.Resources>
+        <converters:IntToStringConverter x:Key="IntToStringConverter"/>
+        <Style TargetType="{x:Type GridViewColumnHeader}">
+            <Setter Property="IsEnabled" Value="False"/>
+            <Style.Triggers>
+                <Trigger Property="IsEnabled" Value="False">
+                    <Setter Property="TextElement.Foreground" Value="Black"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+    </Window.Resources>
+    <Window.InputBindings>
+        <KeyBinding Gesture="CTRL+S" Command="{Binding Path=CtrlSCommand}"/>
+        <KeyBinding Gesture="CTRL+Z" Command="{Binding Path=UndoCommand}"/>
+        <KeyBinding Gesture="CTRL+R" Command="{Binding Path=RepeatLastPointCommand}"/>
+    </Window.InputBindings>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <Menu Grid.Row="0">
+            <MenuItem Header="File">
+                <MenuItem Header="New" Command="{Binding Path=NewSessionCommand}"/>
+                <MenuItem Header="Open" Command="{Binding Path=OpenVideoCommand}"/>
+                <MenuItem Header="Save" Command="{Binding Path=SaveCommand}" InputGestureText="Ctrl+S"/>
+                <MenuItem Header="Save As" Command="{Binding Path=SaveAsCommand}"/>
+                <MenuItem Header="Exit" Command="{Binding Path=ExitCommand}"/>
+            </MenuItem>
+            <MenuItem Header="Edit">
+                <MenuItem Header="Undo" Command="{Binding Path=UndoCommand}" InputGestureText="Ctrl+Z"/>
+                <MenuItem Header="Repeat" Command="{Binding Path=RepeatLastPointCommand}" InputGestureText="Ctrl+R"/>
+                <Separator/>
+                <MenuItem Header="Settings" Command="{Binding Path=OpenSettingsWindowCommand}"/>
+            </MenuItem>
+            
+            <MenuItem Header="Tools">
+                <MenuItem Header="Analyser" Command="{Binding Path=OpenAnalyserWindowCommand}"/>
+            </MenuItem>
+            
+            <MenuItem Header="Help">
+                <MenuItem Header="About" Command="{Binding Path=OpenAboutCommand}"/>
+            </MenuItem>
+        </Menu>
+
+        <Grid Grid.Row="1" Visibility="{Binding Path=Started, Converter={StaticResource InverseBooleanToVisibilityConverter}}">
+            <Image Source="Images\MainIdleBackground.png"></Image>
+        </Grid>
+        
+        <Grid Grid.Row="1" Visibility="{Binding Path=Started, Converter={StaticResource BooleanToVisibilityConverter}}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="6*"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <GridSplitter Grid.Row="1" Grid.RowSpan="2" Grid.Column="1" Style="{DynamicResource GridSplitterStyleVertical}" HorizontalAlignment="Center" VerticalAlignment="Stretch" ShowsPreview="True" Width="5"/>
+            
+            <Grid Grid.Row="1" Grid.Column="2" IsEnabled="{Binding Path=VideoSelected}">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <ListView Margin="5" 
+                          Grid.Row="0"
+                          ItemsSource="{Binding Path=Whiskers}" 
+                          SelectedItem="{Binding Path=SelectedWhisker, Mode=TwoWay}" 
+                          IsEnabled="{Binding Path=Started}"
+                          SelectionMode="Single"
+                          behaviours:ListViewKeepItemSelectedBehaviour.DisableDeselect="True">
+                    <ListView.View>
+                        <GridView>
+                            <GridViewColumn Header="Current Whisker" Width="120">
+                                <GridViewColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding Path=WhiskerName}"/>
+                                    </DataTemplate>
+                                </GridViewColumn.CellTemplate>
+                            </GridViewColumn>
+                        </GridView>
+                    </ListView.View>
+                </ListView>
+
+                <Separator Grid.Row="1"/>
+                
+                <ListView Margin="5" 
+                          Grid.Row="2"
+                          ItemsSource="{Binding Path=WhiskerPoints}" 
+                          SelectedItem="{Binding Path=SelectedWhiskerPoint, Mode=TwoWay}"
+                          IsEnabled="{Binding Path=Started}"
+                          SelectionMode="Single"
+                          behaviours:ListViewKeepItemSelectedBehaviour.DisableDeselect="True">
+                    <ListView.View>
+                        <GridView>
+                            <GridViewColumn Header="Current Point" Width="120">
+                                <GridViewColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding Path=PointId}"/>
+                                    </DataTemplate>
+                                </GridViewColumn.CellTemplate>
+                            </GridViewColumn>
+                        </GridView>
+                    </ListView.View>
+                </ListView>
+
+                <Separator Grid.Row="3"/>
+                
+                <StackPanel Orientation="Vertical" Grid.Row="4" Margin="5">
+                    <CheckBox Content="Auto Next Frame" IsChecked="{Binding Path=AutoNextFrame, Mode=TwoWay}"/>
+                    <CheckBox Content="Auto Next Point" IsChecked="{Binding Path=AutoNextPoint, Mode=TwoWay}"/>
+                    <CheckBox Content="Equalize Image" IsChecked="{Binding Path=EqualizeImage, Mode=TwoWay}"/>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
+                        <TextBlock Margin="5" Text="Frame : "/>
+                        <TextBlock Margin="5" Text="{Binding Path=ActualFrameNumber}"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
+                        <TextBlock Margin="5" Text="Index : "/>
+                        <TextBox Margin="5" Text="{Binding Path=FrameCounter, Mode=TwoWay}" Width="50"/>
+                    </StackPanel>
+                    <Button Content="Export" Command="{Binding Path=ExportCommand}"/>
+                </StackPanel>
+            </Grid>
+
+            <Image x:Name="MainImage" IsEnabled="{Binding Path=Started}" MouseDown="Image_OnMouseDown" SizeChanged="Image_OnSizeChanged" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="1" Grid.Column="0"  Source="{Binding Path=Image, Converter={StaticResource BitmapConverter}}"/>
+
+            <ItemsControl Grid.Row="1" Grid.Column="0" ItemsSource="{Binding Path=AllWhiskerPoints}" HorizontalAlignment="Center" VerticalAlignment="Center">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <Canvas IsItemsHost="True" Width="{Binding Path=DataContext.LastKnownImageWidth, RelativeSource={RelativeSource AncestorType=Window}}" Height="{Binding Path=DataContext.LastKnownImageHeight, RelativeSource={RelativeSource AncestorType=Window}}"/>
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemContainerStyle>
+                    <Style>
+                        <Setter Property="Canvas.Left" Value="{Binding XCanvas}"/>
+                        <Setter Property="Canvas.Top" Value="{Binding YCanvas}"/>
+                    </Style>
+                </ItemsControl.ItemContainerStyle>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Ellipse IsHitTestVisible="False" Stroke="{Binding Color}" Width="{Binding Width}" Height="{Binding Height}" Visibility="{Binding PointPlaced, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+
+            <ItemsControl ItemsSource="{Binding Path=AllPrevWhiskerPoints}" Grid.Row="1" Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <Canvas IsItemsHost="True" Width="{Binding Path=DataContext.LastKnownImageWidth, RelativeSource={RelativeSource AncestorType=Window}}" Height="{Binding Path=DataContext.LastKnownImageHeight, RelativeSource={RelativeSource AncestorType=Window}}"/>
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemContainerStyle>
+                    <Style>
+                        <Setter Property="Canvas.Left" Value="{Binding XCanvas}"/>
+                        <Setter Property="Canvas.Top" Value="{Binding YCanvas}"/>
+                    </Style>
+                </ItemsControl.ItemContainerStyle>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Ellipse IsHitTestVisible="False" Opacity="0.5" Stroke="{Binding Color}" Width="{Binding Width}" Height="{Binding Height}" Visibility="{Binding PointPlaced, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+            
+            <StackPanel Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Center">
+                <Button Content="Previous Frame" Width="100" Height="30" Margin="5" Command="{Binding Path=PreviousFrameCommand}"/>
+                <Button Content="Next Frame" Width="100" Height="30" Margin="5" Command="{Binding Path=NextFrameCommand}"/>
+            </StackPanel>
+        </Grid>
+    </Grid>
+</Window>

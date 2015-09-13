@@ -1,0 +1,80 @@
+﻿<UserControl x:Class="RobynsWhiskerTracker.View.Settings.ColorSettingsUserControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:toolkit="http://schemas.xceed.com/wpf/xaml/toolkit"
+             xmlns:converters="clr-namespace:RobynsWhiskerTracker.Converters"
+             mc:Ignorable="d" 
+             d:DesignHeight="300" d:DesignWidth="300">
+    
+    <UserControl.Resources>
+        <converters:MediaColorToDrawingColor x:Key="ColorConverter"/>
+        <Style TargetType="TextBlock">
+            <Setter Property="Margin" Value="5"/>
+        </Style>
+        <Style TargetType="toolkit:ColorPicker">
+            <Setter Property="Margin" Value="5"/>
+        </Style>
+    </UserControl.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+        <ColumnDefinition/>
+    </Grid.ColumnDefinitions>
+            
+        <TextBlock Text="Nose Point" Grid.Row="0" Grid.Column="0" HorizontalAlignment="Right"/>
+        <toolkit:ColorPicker Grid.Row="0" Grid.Column="1" HorizontalAlignment="Left" Width="100" SelectedColor="{Binding Path=NoseColor, Mode=TwoWay, Converter={StaticResource ColorConverter}}"/>
+        
+        <TextBlock Text="Orientation Point" Grid.Row="1" Grid.Column="0" HorizontalAlignment="Right"/>
+        <toolkit:ColorPicker Grid.Row="1" Grid.Column="1" HorizontalAlignment="Left" Width="100" SelectedColor="{Binding Path=OrientationColor, Mode=TwoWay, Converter={StaticResource ColorConverter}}"/>
+
+        <TextBlock Text="Whisker Point 1" Grid.Row="2" Grid.Column="0" HorizontalAlignment="Right"/>
+        <toolkit:ColorPicker Grid.Row="2" Grid.Column="1" HorizontalAlignment="Left" Width="100" SelectedColor="{Binding Path=Whisker1Color, Mode=TwoWay, Converter={StaticResource ColorConverter}}"/>
+
+        <TextBlock Text="Whisker Point 2" Grid.Row="3" Grid.Column="0" HorizontalAlignment="Right"/>
+        <toolkit:ColorPicker Grid.Row="3" Grid.Column="1" HorizontalAlignment="Left" Width="100" SelectedColor="{Binding Path=Whisker2Color, Mode=TwoWay, Converter={StaticResource ColorConverter}}"/>
+
+        <TextBlock Text="Whisker Point 3" Grid.Row="4" Grid.Column="0" HorizontalAlignment="Right"/>
+        <toolkit:ColorPicker Grid.Row="4" Grid.Column="1" HorizontalAlignment="Left" Width="100" SelectedColor="{Binding Path=Whisker3Color, Mode=TwoWay, Converter={StaticResource ColorConverter}}"/>
+
+        <TextBlock Text="Whisker Point 4" Grid.Row="5" Grid.Column="0" HorizontalAlignment="Right"/>
+        <toolkit:ColorPicker Grid.Row="5" Grid.Column="1" HorizontalAlignment="Left" Width="100" SelectedColor="{Binding Path=Whisker4Color, Mode=TwoWay, Converter={StaticResource ColorConverter}}"/>
+
+        <TextBlock Text="Whisker Point 5" Grid.Row="6" Grid.Column="0" HorizontalAlignment="Right"/>
+        <toolkit:ColorPicker Grid.Row="6" Grid.Column="1" HorizontalAlignment="Left" Width="100" SelectedColor="{Binding Path=Whisker5Color, Mode=TwoWay, Converter={StaticResource ColorConverter}}"/>
+
+        <TextBlock Text="Whisker Point 6" Grid.Row="7" Grid.Column="0" HorizontalAlignment="Right"/>
+        <toolkit:ColorPicker Grid.Row="7" Grid.Column="1" HorizontalAlignment="Left" Width="100" SelectedColor="{Binding Path=Whisker6Color, Mode=TwoWay, Converter={StaticResource ColorConverter}}"/>
+
+        <TextBlock Text="Whisker Point 7" Grid.Row="8" Grid.Column="0" HorizontalAlignment="Right"/>
+        <toolkit:ColorPicker Grid.Row="8" Grid.Column="1" HorizontalAlignment="Left" Width="100" SelectedColor="{Binding Path=Whisker7Color, Mode=TwoWay, Converter={StaticResource ColorConverter}}"/>
+
+        <TextBlock Text="Whisker Point 8" Grid.Row="9" Grid.Column="0" HorizontalAlignment="Right"/>
+        <toolkit:ColorPicker Grid.Row="9" Grid.Column="1" HorizontalAlignment="Left" Width="100" SelectedColor="{Binding Path=Whisker8Color, Mode=TwoWay, Converter={StaticResource ColorConverter}}"/>
+
+        <TextBlock Text="Whisker Point 9" Grid.Row="10" Grid.Column="0" HorizontalAlignment="Right"/>
+        <toolkit:ColorPicker Grid.Row="10" Grid.Column="1" HorizontalAlignment="Left" Width="100" SelectedColor="{Binding Path=Whisker9Color, Mode=TwoWay, Converter={StaticResource ColorConverter}}"/>
+
+        <TextBlock Text="Whisker Point 10" Grid.Row="11" Grid.Column="0" HorizontalAlignment="Right"/>
+        <toolkit:ColorPicker Grid.Row="11" Grid.Column="1" HorizontalAlignment="Left" Width="100" SelectedColor="{Binding Path=Whisker10Color, Mode=TwoWay, Converter={StaticResource ColorConverter}}"/>
+        
+        <Button Content="Revert To Default" Grid.Row="12" Grid.Column="0" Grid.ColumnSpan="2" HorizontalAlignment="Center" Margin="5" Width="100" Height="30" Command="{Binding Path=RevertToDefaultCommand}"/>
+    </Grid>
+</UserControl>
